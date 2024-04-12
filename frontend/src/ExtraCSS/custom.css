@@ -1,0 +1,43 @@
+.custom-inputs {
+    background: none !important;
+    border: none !important;
+    border-bottom: 2px solid #6495ED !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important; 
+    width: 100% !important;
+    color: black !important;
+  }
+.custom-inputs:focus {
+    border-bottom: 2px solid #00008B !important;
+}
+.custom-inputs-valid {
+  background: none !important;
+  border: none !important;
+  border-bottom: 2px solid #36a307 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important; 
+  width: 100% !important;
+  color: black !important;
+}
+.custom-inputs-invalid {
+  background: none !important;
+  border: none !important;
+  border-bottom: 2px solid #f50505 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important; 
+  width: 100% !important;
+  color: black !important;
+}
+.custom-inputs-taken {
+  background: none !important;
+  border: none !important;
+  border-bottom: 2px solid #d4ac18 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important; 
+  width: 100% !important;
+  color: black !important;
+}
