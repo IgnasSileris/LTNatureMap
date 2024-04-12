@@ -17,4 +17,7 @@ frontend/.vscode/
 frontend/*.sublime-project
 frontend/*.sublime-workspace
 
-backend/src/config
+test.js
+backend/test2.js
+backend/server.js
+backend/.env
