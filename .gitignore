@@ -18,3 +18,5 @@ frontend/*.sublime-project
 frontend/*.sublime-workspace
 
 backend/.env
+
+node_modules

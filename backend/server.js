@@ -1,8 +1,8 @@
-import express from 'express';
-import db from './config/database.js';
-import dotenv from 'dotenv';
+const express = require('express');
+const db = require('./src/config/database.js');
+const dotenv = require('dotenv');
 
-dotenv.config({ path: '../.env'});
+dotenv.config({ path: '.env' });
 
 db.authenticate()
     .then(async () => {
@@ -13,13 +13,14 @@ db.authenticate()
     .catch((err) => {
         console.error('Connection to database failed: ', err);
     });
+
 db.queryInterface.showAllTables()
-.then(tableNames => {
-    console.log('Existing tables:', tableNames);
-})
-.catch(err => {
-    console.error('Error occurred while fetching existing tables:', err);
-});
+    .then(tableNames => {
+        console.log('Existing tables:', tableNames);
+    })
+    .catch(err => {
+        console.error('Error occurred while fetching existing tables:', err);
+    });
 
 const app = express();
 
