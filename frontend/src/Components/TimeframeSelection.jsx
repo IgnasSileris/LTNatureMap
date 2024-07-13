@@ -1,10 +1,9 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { setTimeframeView } from '../reducers/timeframeViewReducer';
+import { useTimeframeViewStore } from '../stores/timeframeViewStore';
 
 function TimeframeButton(props) {
-    const timeframeView = useSelector((state) => state.timeframeView);
-    const dispatch = useDispatch();
+    const timeframeView = useTimeframeViewStore((state) => state.timeframeView);
+    const setTimeframeView = useTimeframeViewStore((state) => state.setTimeframeView);
 
     let allStyles = timeframeView === props.name ? 'border-black px-1 bg-gray-300' : 'border-black px-1 hover:bg-gray-300';
     if (props.name === '1D') {
@@ -14,7 +13,7 @@ function TimeframeButton(props) {
     }
 
     return (
-        <button title={props.title} className={allStyles} onClick={() => dispatch(setTimeframeView(props.name))}>
+        <button title={props.title} className={allStyles} onClick={() => setTimeframeView(props.name)}>
             <span> {props.name}</span>
             {timeframeView === props.name && (<div className=" bg-black opacity-60 w-full h-0.5"></div>)}
         </button>

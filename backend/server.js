@@ -24,6 +24,14 @@ db.queryInterface.showAllTables()
 
 const app = express();
 
+// app.get('/test', (req,res) => {
+//     res.json({hello:'world'})
+// })
+
+// app.post('/api/user', (req,res) => {
+    
+// })
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

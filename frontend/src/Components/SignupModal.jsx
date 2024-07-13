@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { closeSignupModal } from '../reducers/signupModalStatusReducer';
-import { openLoginModal } from '../reducers/loginModalStatusReducer';
 import ModalDialog from "react-basic-modal-dialog";
 import "primereact/resources/themes/lara-light-indigo/theme.css";     
 import "primereact/resources/primereact.min.css";
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import '../ExtraCSS/custom.css';
+import { useNavigate } from 'react-router-dom';
+import { useLocationStateStore } from '../stores/locationStateStore';
 
 function SignupModal() {
-    const signupModalStatus = useSelector((state) => state.signupModalStatus);
-    const dispatch = useDispatch();
-    function openingLoginModal(){
-        dispatch(closeSignupModal());
-        dispatch(openLoginModal());
+    const navigate = useNavigate();
+    const locationState = useLocationStateStore((state) => state.locationState);
+    const setLocationState = useLocationStateStore((state) => state.setLocationState);
+
+    const closingSignup = () => {
+        try {
+            navigate(locationState.pathname);
+        } catch {
+            navigate('/')
+        }
+        setLocationState(null);
     }
 
     //#region Input value manager
@@ -250,11 +255,11 @@ function SignupModal() {
     //#endregion
     //#endregion
     return (
-        <ModalDialog isDialogVisible={signupModalStatus} closeDialog={() => dispatch(closeSignupModal())}
+        <ModalDialog isDialogVisible={true} closeDialog={() => {}}
         dialogClassName="bg-gray-200 w-1/4 h-3/4 rounded-lg backdrop:bg-black/40"
         divClassName="flex flex-col w-full h-full justify-center items-center">     
             <div className="w-full flex items-center justify-end p-5 pb-1 pt-1">
-                <button title="Close" className="font-normal text-3xl font-sans text-gray-500 hover:text-black" onClick={()=> dispatch(closeSignupModal())}> x</button>
+                <button title="Close" className="font-normal text-3xl font-sans text-gray-500 hover:text-black" onClick={()=> closingSignup()}> x</button>
             </div>
             <div className="flex w-full h-full p-12 pt-0">
                 <div className="flex flex-col w-full h-full">
@@ -317,7 +322,7 @@ function SignupModal() {
                     </div>
                     <div className="flex items-center justify-center" style={{width:'100%', height:'5%'}}>
                         <span>Already have an account? <button className="text-sky-800 hover:text-indigo-500"
-                        onClick={openingLoginModal}> Log in.</button></span>
+                        onClick={()=> navigate('/login')}> Log in.</button></span>
                     </div>
                 </div>
             </div>      
