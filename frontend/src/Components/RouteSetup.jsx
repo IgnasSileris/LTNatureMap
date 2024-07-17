@@ -14,7 +14,14 @@ import { useLocationStateStore } from '../stores/locationStateStore';
 function RouteSetup() {
     const location = useLocation();
     const locationState = useLocationStateStore((state) => state.locationState);
+    const setLocationState = useLocationStateStore((state) => state.setLocationState);
 
+    useEffect(() => {
+      if (!['/signup', '/login'].includes(location.pathname)) {
+        setLocationState(null);
+      }
+    }, [location])
+    
     return (
         <div className="relative flex justify-center items-center h-screen">
           <Routes location={locationState || location}>
