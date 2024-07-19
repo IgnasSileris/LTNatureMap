@@ -23,14 +23,13 @@ db.queryInterface.showAllTables()
     });
 
 const app = express();
+const cors = require('cors');
 
-// app.get('/test', (req,res) => {
-//     res.json({hello:'world'})
-// })
+app.use(cors());
 
-// app.post('/api/user', (req,res) => {
-    
-// })
+const userRoutes = require('./src/routes/users/index.js');
+
+app.use('/api/users', userRoutes);
 
 const PORT = process.env.PORT || 3000;
 

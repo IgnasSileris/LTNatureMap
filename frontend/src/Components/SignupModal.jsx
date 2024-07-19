@@ -30,9 +30,12 @@ function SignupModal() {
     const handleEmailChange = (e) => {
         setEmailValue(e.target.value);
     }
-    const checkEmailValidity = (eValue) => {
+    const checkEmailValidity = async (eValue) => {
         eValue = eValue.toLowerCase();
-        const takenEmails = ["alice@gm.com", "bob@gm.com", "charlie@gm.com", "david@gm.com", "eve@gm.com"];
+
+        const response = await fetch(`http://localhost:3000/api/users/signup/email_availability_check?email=${eValue}`);
+        const data = await response.json();
+
         const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/; //simple Regex (does not contain all the possible email rules, email confirmation in backend)
 
         if (emailRegex.test(eValue)){
@@ -41,7 +44,7 @@ function SignupModal() {
         if (emailRegex.test(eValue) === false){
             setEmailStatus('Invalid');
         }
-        if (takenEmails.includes(eValue)){
+        if (!data.available){
             setEmailStatus('Taken');
         }
         if (eValue.length === 0) {
@@ -95,18 +98,19 @@ function SignupModal() {
         }
     }
     
-    const checkUsernameValidity = (uValue) => {
-        const takenUsernames = ["Alice", "Bob", "Charlie", "David", "Eve"];
+    const checkUsernameValidity = async (uValue) => {
+        const response = await fetch(`http://localhost:3000/api/users/signup/username_availability_check?username=${uValue}`);
+        const data = await response.json();
         const alphanumericRegex = /^[a-zA-Z0-9]+$/;
         if (uValue.length === 0){
             setUsernameStatus('Passive');
         }
         if (uValue.length >= 2 && isChar(uValue.charCodeAt(0)) && alphanumericRegex.test(uValue)){
             setUsernameStatus('Valid');
-            if (takenUsernames.includes(uValue)) { // Replace with req and res to and from server
+            if (!data.available) {
                 setUsernameStatus('Taken');
             }
-        }
+            }
         if ((0 < uValue.length && uValue.length < 2) || ((uValue.length > 2) && (isChar(uValue.charCodeAt(0))===false || alphanumericRegex.test(uValue) === false))){
             setUsernameStatus('Invalid');
         }

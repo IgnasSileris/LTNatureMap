@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import BackgroundImage from './BackgroundImage';
 import ContentsBox from './ContentsBox';
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
@@ -16,12 +16,12 @@ function RouteSetup() {
     const locationState = useLocationStateStore((state) => state.locationState);
     const setLocationState = useLocationStateStore((state) => state.setLocationState);
 
-    useEffect(() => {
+    useMemo(() => {
       if (!['/signup', '/login'].includes(location.pathname)) {
         setLocationState(null);
       }
-    }, [location])
-    
+    }, [location.pathname])
+
     return (
         <div className="relative flex justify-center items-center h-screen">
           <Routes location={locationState || location}>
