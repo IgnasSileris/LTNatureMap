@@ -1,11 +1,20 @@
 const { DataTypes } = require('sequelize');
-const db = require('./config/database.js');
+const bcrypt = require('bcrypt');
+const db = require('../config/database.js');
 
 const User = db.define('user', {
     userID: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+            isEmail: true,
+        }
     },
     username: {
         type: DataTypes.STRING,
@@ -15,18 +24,10 @@ const User = db.define('user', {
             isAlphanumeric: true,
             len: [2, 25],
             startsWithLetter(value) {
-                if (!('a'.charCodeAt(0) <= value && value <= 'z'.charCodeAt(0)) || ('A'.charCodeAt(0) <= value && value <= 'Z'.charCodeAt(0))){
+                if (!(('a'.charCodeAt(0) <= value.charCodeAt(0) && value.charCodeAt(0) <= 'z'.charCodeAt(0)) || ('A'.charCodeAt(0) <= value.charCodeAt(0) && value.charCodeAt(0) <= 'Z'.charCodeAt(0)))){
                     throw new Error('Username must start with a letter');
                 }
             }
-        }
-    },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-        validate: {
-            isEmail: true,
         }
     },
     password: {
@@ -62,6 +63,13 @@ const User = db.define('user', {
     },
     date_created: {
         type: DataTypes.DATE,
+    }
+});
+
+User.beforeCreate(async (user, options) => {
+    if (user.password) {
+        const salt = await bcrypt.genSalt();
+        user.password = await bcrypt.hash(user.password, salt);
     }
 });
 

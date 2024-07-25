@@ -7,6 +7,29 @@ import { Password } from 'primereact/password';
 import '../ExtraCSS/custom.css';
 import { useNavigate } from 'react-router-dom';
 import { useLocationStateStore } from '../stores/locationStateStore';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSquareXmark } from '@fortawesome/free-solid-svg-icons';
+
+function ErrorModal(props) {
+    return (
+        <ModalDialog isDialogVisible={props.showCondition}
+        closeDialog={props.closeAction}
+        dialogClassName="bg-gray-100 w-1/6 h-1/6 rounded-lg backdrop:bg-black/30"
+        divClassName="flex flex-col w-full h-full justify-center items-center">
+            <div className="absolute top-0 right-0 p-3">
+                <button onClick={props.closeAction}>
+                <FontAwesomeIcon icon={faSquareXmark} className="w-6 h-6 text-rose-400 hover:text-rose-500"/>
+                </button>
+            </div>
+            <div className="flex flex-col justify-center items-center h-full">
+                Signup failed.
+                <span></span>
+                {props.text}
+            </div>
+        </ModalDialog>
+    );
+}
+
 
 function SignupModal() {
     const navigate = useNavigate();
@@ -20,7 +43,7 @@ function SignupModal() {
             navigate('/')
         }
         setLocationState(null);
-    }
+    };
 
     //#region Input value manager
     //#region Email
@@ -35,7 +58,7 @@ function SignupModal() {
 
         const response = await fetch(`http://localhost:3000/api/users/signup/email_availability_check?email=${eValue}`);
         const data = await response.json();
-
+        console.log(data);
         const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/; //simple Regex (does not contain all the possible email rules, email confirmation in backend)
 
         if (emailRegex.test(eValue)){
@@ -99,6 +122,7 @@ function SignupModal() {
     }
     
     const checkUsernameValidity = async (uValue) => {
+        uValue = uValue.toLowerCase();
         const response = await fetch(`http://localhost:3000/api/users/signup/username_availability_check?username=${uValue}`);
         const data = await response.json();
         const alphanumericRegex = /^[a-zA-Z0-9]+$/;
@@ -257,7 +281,75 @@ function SignupModal() {
     }, [password2Status])
 
     //#endregion
+
+    const [signupValid, setSignupValid] = useState(false); // boolean
+    
+    useEffect(()=> {
+        if (emailStatus == 'Valid' && usernameStatus == 'Valid' && password1Status == 'Valid' && password2Status == 'Valid') {
+            setSignupValid(true);
+        }
+        else {
+            setSignupValid(false);
+        }
+
+        if (emailStatus != 'Valid') {
+            setErrorText('Email is invalid or already taken.');
+        }
+        else if (usernameStatus != 'Valid') {
+            setErrorText('Username is invalid or already taken.');
+        }
+        else if (password1Status != 'Valid') {
+            setErrorText('Password is invalid.');
+        }
+        else if (password2Status != 'Valid') {  
+            setErrorText('Passwords do not match.');
+        }
+
+    }, [emailStatus, usernameStatus, password1Status, password2Status])
+
+    const [showErrorDialog, setShowErrorDialog] = useState(false);
+
     //#endregion
+    const [errorText, setErrorText] = useState('');
+
+    const submitSignup = async () => {
+        const params = {
+            email: emailValue.toLowerCase(),
+            username: usernameValue.toLowerCase(),
+            password1: password1Value,
+            password2: password2Value
+        };
+
+        const baseUrl = new URL("http://localhost:3000/api/users/signup/create_user");
+        const searchParams = new URLSearchParams(params);
+        baseUrl.search = searchParams.toString();
+
+        const response = await fetch(baseUrl, {
+            method: 'POST',
+            headers: { 
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.status != 200) {
+            if (data.errors.includes('email')) {
+                setEmailStatus('Invalid');
+            }
+            if (data.errors.includes('username')) {
+                setUsernameStatus('Invalid');
+            }
+            if (data.errors.includes('password')) {
+                setPassword1Status('Invalid');
+            }
+            if (data.errors.includes('verifyPassword')) {
+                setPassword2Status('Invalid');
+            }
+            setShowErrorDialog(true);
+        }
+    };
+
     return (
         <ModalDialog isDialogVisible={true} closeDialog={() => {}}
         dialogClassName="bg-gray-200 w-1/4 h-3/4 rounded-lg backdrop:bg-black/40"
@@ -266,6 +358,9 @@ function SignupModal() {
                 <button title="Close" className="font-normal text-3xl font-sans text-gray-500 hover:text-black" onClick={()=> closingSignup()}> x</button>
             </div>
             <div className="flex w-full h-full p-12 pt-0">
+                <ErrorModal showCondition={showErrorDialog}
+                closeAction={()=> {setShowErrorDialog(false)}}
+                text={errorText}/>
                 <div className="flex flex-col w-full h-full">
                     <div className="flex items-center justify-center text-2xl font-bold" style={{width: '100%', height: '15%'}}>
                         Create an account
@@ -322,7 +417,8 @@ function SignupModal() {
                     </div>
                     
                     <div className="flex items-center justify-center" style={{width:'100%', height:'15%'}}>
-                        <button className="border-solid border bg-rose-400 hover:bg-rose-500 px-4 py-2 rounded-md">Sign up</button>
+                        <button className="border-solid border bg-rose-400 hover:bg-rose-500 px-4 py-2 rounded-md"
+                        onClick={()=> submitSignup()}>Sign up</button>
                     </div>
                     <div className="flex items-center justify-center" style={{width:'100%', height:'5%'}}>
                         <span>Already have an account? <button className="text-sky-800 hover:text-indigo-500"

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMap, faBars, faRankingStar, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faMap, faBars, faRankingStar, faMagnifyingGlass, faSquareXmark } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useDisplayModeStore } from '../stores/displayModeStore';
 
